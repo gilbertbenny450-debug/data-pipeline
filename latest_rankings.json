@@ -1,5 +1,76 @@
 {
   "highest_rated": [],
   "trending": [],
-  "upcoming": []
+  "upcoming": [
+    {
+      "score": 0.143,
+      "name": "Santa Maria Pizzeria",
+      "region": "South West",
+      "category": "restaurant",
+      "cuisine": "pizza"
+    },
+    {
+      "score": 0.143,
+      "name": "Hot Pepper Cafe",
+      "region": "Central",
+      "category": "cafe",
+      "cuisine": null
+    },
+    {
+      "score": 0.143,
+      "name": "Buvette",
+      "region": "Central",
+      "category": "restaurant",
+      "cuisine": "french"
+    },
+    {
+      "score": 0.143,
+      "name": "Greggs @ Primark Oxford St",
+      "region": "Central",
+      "category": "cafe",
+      "cuisine": null
+    },
+    {
+      "score": 0.143,
+      "name": "Roost",
+      "region": "North East",
+      "category": "restaurant",
+      "cuisine": "chicken"
+    },
+    {
+      "score": 0.143,
+      "name": "Cheat meals",
+      "region": "South West",
+      "category": "fast_food",
+      "cuisine": null
+    },
+    {
+      "score": 0.143,
+      "name": "It\u2019s Bagels",
+      "region": "North West",
+      "category": "bakery",
+      "cuisine": null
+    },
+    {
+      "score": 0.143,
+      "name": "K&D Bar N Co",
+      "region": "Central",
+      "category": "cafe",
+      "cuisine": "portuguese"
+    },
+    {
+      "score": 0.143,
+      "name": "Buvette",
+      "region": "Central",
+      "category": "restaurant",
+      "cuisine": "french"
+    },
+    {
+      "score": 0.143,
+      "name": "GF Chicken",
+      "region": "South East",
+      "category": "fast_food",
+      "cuisine": "chicken;grill;pizza"
+    }
+  ]
 }
