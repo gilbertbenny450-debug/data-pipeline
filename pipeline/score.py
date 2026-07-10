@@ -46,7 +46,7 @@ def review_velocity(con, venue_id) -> float:
                 - date.fromisoformat(oldest["snap_date"])).days, 1)
     delta = (newest["review_count"] or 0) - (oldest["review_count"] or 0)
     weekly = delta / days * 7
-    base = max((oldest["review_count"] or 0) / 52, 0.5)  # rough lifetime weekly baseline
+    base = max((oldest["review_count"] or 0) / 52, 0.5)
     return weekly / base
 
 def eligible(v) -> bool:
@@ -56,9 +56,6 @@ def eligible(v) -> bool:
 def compute(db_path="london_food.db", top=15):
     con = connect(db_path)
     venues = con.execute("SELECT * FROM venues").fetchall()
-    # Bootstrap guard: venues from the pipeline's first-ever pull aren't "new" —
-    # they were just unknown to us. Only later arrivals (or Companies House
-    # matches) qualify for Upcoming.
     row = con.execute("SELECT MIN(first_seen) m FROM venues").fetchone()
     bootstrap_date = row["m"]
     rated, trending, upcoming = [], [], []
@@ -68,25 +65,23 @@ def compute(db_path="london_food.db", top=15):
         br = bayes_rating(v["rating"], v["review_count"])
         buzz = editorial_buzz(con, v["id"])
         vel = review_velocity(con, v["id"])
-        # Highest Rated: strict floor on confidence-weighted rating (spec 3)
         if br is not None and br >= RATING_FLOOR:
             rated.append((br, v))
-        # Trending: floor + velocity/buzz blend
         if (br is None or br >= RATING_FLOOR) and (vel > 0 or buzz > 0) and v["rating"] is not None:
             trending.append((vel * 2 + buzz, v))
-        # Upcoming: recently first-seen; no floor, but eject clear duds (spec 3.2)
         age_days = (date.today() - date.fromisoformat(v["first_seen"])).days
         is_new_biz = con.execute(
             "SELECT 1 FROM new_businesses WHERE matched_venue_id=?", (v["id"],)).fetchone()
         if (age_days <= UPCOMING_GRADUATE_DAYS and v["first_seen"] != bootstrap_date) or is_new_biz:
             rc, rt = v["review_count"] or 0, v["rating"]
             if rt is not None and rc >= UPCOMING_EJECT_MIN_REVIEWS and rt < UPCOMING_EJECT_RATING:
-                continue  # ejection rule
+                continue
             upcoming.append((buzz + (rt or 0) / 5 + 1 / (age_days + 7), v))
     out = {}
     for lens, lst in (("highest_rated", rated), ("trending", trending), ("upcoming", upcoming)):
         lst.sort(key=lambda t: t[0], reverse=True)
-        out[lens] = [{"score": round(s, 3), "name": v["name"], "region": v["region"],
+        out[lens] = [{"score": round(s, 3), "id": v["id"], "name": v["name"], "region": v["region"],
+                      "lat": v["lat"], "lon": v["lon"],
                       "category": v["category"], "cuisine": v["cuisine"]} for s, v in lst[:top]]
     return out
 
