@@ -1,8 +1,8 @@
-"""Weekly pipeline run: pull venues, take snapshot, gather signals, score.
+"""Weekly pipeline run: pull venues, take snapshot, gather signals, score, export.
 Usage: python run_weekly.py [db_path]
 """
 import sys
-from pipeline import fetch_osm, editorial, companies_house, score
+from pipeline import fetch_osm, editorial, companies_house, score, export_app
 
 def main(db="london_food.db"):
     print("=== London Food Discovery — weekly pipeline run ===")
@@ -17,6 +17,7 @@ def main(db="london_food.db"):
     with open("latest_rankings.json", "w") as f:
         json.dump(results, f, indent=2)
     print("Rankings written to latest_rankings.json")
+    export_app.run(db)
 
 if __name__ == "__main__":
     main(sys.argv[1] if len(sys.argv) > 1 else "london_food.db")
